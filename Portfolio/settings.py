@@ -14,6 +14,8 @@ from dotenv import load_dotenv
 from pathlib import Path
 from datetime import timedelta
 
+# from accounts.models import CustomUser
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,24 +33,27 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost"]
 
-CORS_ORIGIN_ALLOW_ALL = True
-
 # Application definition
+AUTH_USER_MODEL = "accounts.CustomUser"
 
 INSTALLED_APPS = [
-    'corsheaders',
+    # default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 3rd party apps
     'rest_framework',
-    'api',
+    'corsheaders',
+    # local apps
+    'accounts.apps.AccountsConfig',
+    'posts.apps.PostsConfig'
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    # default apps
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,7 +61,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 3rd party middleware
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ORIGINS_WHITELIST = (
+    "http://localhost:3000",
+    "http://localhost:8000",
+)
+
+CSRF_TRUSTED_ORIGINS = ("http://localhost:3000",)
 
 ROOT_URLCONF = 'Portfolio.urls'
 
@@ -77,12 +91,16 @@ TEMPLATES = [
     },
 ]
 
-# Authentication
+# api
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
     )
 }
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -91,7 +109,6 @@ SIMPLE_JWT = {
 }
 
 WSGI_APPLICATION = 'Portfolio.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -102,7 +119,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -122,7 +138,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -133,7 +148,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
