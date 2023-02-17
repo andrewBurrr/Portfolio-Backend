@@ -31,7 +31,12 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost"]
+CORS_ORIGIN_WHITELIST = (
+    "http://localhost:8000",
+    "http://localhost:3000"
+)
+
+CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
 
 # Application definition
 AUTH_USER_MODEL = "accounts.CustomUser"
